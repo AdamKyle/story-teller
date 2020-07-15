@@ -8,3 +8,4 @@ edition = "2018"
 character = {path = 'character'}
 core = {path = 'core'}
 adventures = {path = 'adventures'}
+game = {path = 'game'}

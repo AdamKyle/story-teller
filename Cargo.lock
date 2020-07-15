@@ -13,10 +13,18 @@ name = "core"
 version = "0.1.0"
 
 [[package]]
+name = "game"
+version = "0.1.0"
+dependencies = [
+ "character",
+]
+
+[[package]]
 name = "story_teller"
 version = "0.1.0"
 dependencies = [
  "adventures",
  "character",
  "core",
+ "game",
 ]
