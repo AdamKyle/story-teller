@@ -20,6 +20,10 @@ pub fn create_game() -> Game {
         println!("Invalid input.");
     }
 
+    if name.ends_with('\n') {
+        name.pop();
+    }
+
     let character = build_character(name);
 
     Game  {

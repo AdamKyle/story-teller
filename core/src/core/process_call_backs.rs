@@ -1,28 +1,12 @@
-type Callback = fn();
+use std::boxed::Box;
 
-/// Simple callback structure that contains a callback with no arguments.
-///
-/// # Example
-///
-/// ```
-/// use core::process_call_backs::SimpleCallback;
-///
-/// fn test() { println!("hello world"); }
-///
-/// let callback = SimpleCallback { callback: test };
-///
-/// callback.process()
-/// ```
-///
 pub struct SimpleCallback {
-    pub callback: Callback
+    pub callback: Box<dyn FnOnce()>
 }
 
-/// Implementation for the struct
 impl SimpleCallback {
 
-    /// Calls the registered callback
-    pub fn process(&mut self) {
-        (self.callback)();
+    pub fn process(self) {
+        (self.callback)()
     }
 }

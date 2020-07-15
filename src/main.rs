@@ -1,6 +1,7 @@
 use std::io;
 use std::collections::HashMap;
 use std::vec::Vec;
+use std::boxed::Box;
 use core::launch_adventure::start_adventure;
 use core::create_adventures::make_adventure_list;
 use core::process_call_backs::SimpleCallback;
@@ -14,7 +15,7 @@ fn get_adventures(game: Game) -> HashMap<i32, SimpleCallback> {
     let mut adventures = Vec::new();
 
     let dark_harvest = SimpleCallback {
-        callback: || launch_dark_harvest(game)
+        callback: Box::new(|| launch_dark_harvest(game))
     };
 
     adventures.push(dark_harvest);

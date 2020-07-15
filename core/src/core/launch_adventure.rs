@@ -7,7 +7,7 @@ pub fn start_adventure(mut adventure: String, adventures: HashMap<i32, SimpleCal
         adventure.pop();
     }
 
-    for (number, mut adv) in adventures {
+    for (number, adv) in adventures {
         if number.to_string() == adventure {
             adv.process();
         } else {
