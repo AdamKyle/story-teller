@@ -19,7 +19,7 @@ impl Game {
     }
 
     /// Set the game to either active or not.
-    pub fn set_acive(&mut self, active: bool) {
+    pub fn set_active(&mut self, active: bool) {
         self.active = active;
     }
 
