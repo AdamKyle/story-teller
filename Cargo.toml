@@ -1,0 +1,10 @@
+[package]
+name = "story_teller"
+version = "0.1.0"
+authors = ["adambalan"]
+edition = "2018"
+
+[dependencies]
+character = {path = 'character'}
+core = {path = 'core'}
+adventures = {path = 'adventures'}
