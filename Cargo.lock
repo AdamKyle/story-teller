@@ -3,6 +3,9 @@
 [[package]]
 name = "adventures"
 version = "0.1.0"
+dependencies = [
+ "game",
+]
 
 [[package]]
 name = "character"

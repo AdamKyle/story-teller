@@ -1,11 +1,27 @@
-mod game;
+pub mod game;
 
-use character::charactersheet::Character;
+use std::io;
+use character::charactersheet::build_character;
 
 pub use crate::game::set_up_game::Game;
 
-/// Create a game with a Character.
-pub fn create_game(character: Character) -> Game {
+pub fn create_game() -> Game {
+    println!("Whats your name?");
+
+    let mut name = String::new();
+
+    io::stdin()
+        .read_line(&mut name)
+        .expect("Error! Invalid input.");
+
+    let character_name: Vec<&str> = name.split_whitespace().collect();
+
+    if character_name.is_empty() {
+        println!("Invalid input.");
+    }
+
+    let character = build_character(name);
+
     Game  {
         active: true,
         game_character: character,

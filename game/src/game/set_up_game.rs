@@ -4,6 +4,7 @@ use character::charactersheet::Character;
 ///
 /// Contains information about the game including its status and the
 /// character.
+#[derive(Debug)]
 pub struct Game {
     pub active: bool,
     pub game_character: Character,
