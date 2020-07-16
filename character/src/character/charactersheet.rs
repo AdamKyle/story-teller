@@ -101,9 +101,7 @@ pub fn create_stats(character: Character) -> Character {
 
         if words.is_empty() {
             println!("Invalid input. Try again.");
-        }
-
-        if input.to_string() == "re-roll".to_string() {
+        } else if input.to_string() == "re-roll".to_string() {
 
             stats = Vec::new();
 
@@ -123,8 +121,6 @@ pub fn create_stats(character: Character) -> Character {
         } else if input.to_string() == "quit".to_string() {
             println!("Bye now!");
             process::exit(1);
-        } else {
-            println!("Invalid input. Try again.");
         }
     }
 
