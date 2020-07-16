@@ -1,7 +1,7 @@
 use std::io;
 use std::io::Write;
 use world::{Direction,  World, Action, Exit, Room, make_exit};
-use character::charactersheet::Character;
+use character::charactersheet::{Character, create_stats};
 
 
 #[derive(Debug)]
@@ -114,19 +114,24 @@ impl Game {
     }
 }
 
-pub fn run_dark_harvest(character: Character) {
+pub fn run_dark_harvest(mut character: Character) {
+
+    println!("\nCharacter Creation: Help us create your character sheet.");
+
+    character = create_stats(character);
+
+    let mut _world = dark_harvest_intro();
 
     let mut game = Game {
         active: true,
         game_character: character,
     };
 
-    dark_harvest_intro();
-
     game.run();
 }
 
-fn dark_harvest_intro() {
+fn dark_harvest_intro() -> World {
+    print!("{}[2J", 27 as char);
     println!("==== [Dark Harvest] ===");
     println!("\nIntroduction:");
     println!("
@@ -144,10 +149,6 @@ fn dark_harvest_intro() {
     println!("\n\nAdventure Difficulty: Easy");
     println!("Adventure Lenth:      Medium");
     println!("=======================");
-    println!("\nCharacter Creation: Help us create your character sheet.");
-    print!("{}[2J", 27 as char);
-
-    // Create character sheet here.
 
     let world = World::new(make_starting_room());
 
@@ -157,6 +158,8 @@ fn dark_harvest_intro() {
     println!("{}", world.get_base_room().describe());
     println!("\n");
     println!("What do you do? (type help for commands)");
+
+    return world;
 }
 
 
