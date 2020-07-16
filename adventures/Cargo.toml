@@ -9,4 +9,5 @@ edition = "2018"
 [dependencies]
 game = {path = '../game'}
 world = {path = '../world'}
-text_parsing = {path = '../text_parsing'}
+core = {path = "../core"}
+character = {path = "../character"}

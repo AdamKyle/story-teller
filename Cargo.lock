@@ -4,8 +4,9 @@
 name = "adventures"
 version = "0.1.0"
 dependencies = [
+ "character",
+ "core",
  "game",
- "text_parsing",
  "world",
 ]
 
@@ -33,10 +34,6 @@ dependencies = [
  "core",
  "game",
 ]
-
-[[package]]
-name = "text_parsing"
-version = "0.1.0"
 
 [[package]]
 name = "world"

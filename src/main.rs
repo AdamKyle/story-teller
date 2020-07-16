@@ -5,17 +5,17 @@ use std::boxed::Box;
 use core::launch_adventure::start_adventure;
 use core::create_adventures::make_adventure_list;
 use core::process_call_backs::SimpleCallback;
-use adventures::dark_harvest::launch_dark_harvest;
+use adventures::dark_harvest::run_dark_harvest;
+use character::charactersheet::Character;
 use game::create_game;
-use game::game::set_up_game::Game;
 
 /// Gets a list of adventures and creates them as Hashmap.
-fn get_adventures(game: Game) -> HashMap<i32, SimpleCallback> {
+fn get_adventures(character: Character) -> HashMap<i32, SimpleCallback> {
 
     let mut adventures = Vec::new();
 
     let dark_harvest = SimpleCallback {
-        callback: Box::new(|| launch_dark_harvest(game))
+        callback: Box::new(|| run_dark_harvest(character))
     };
 
     adventures.push(dark_harvest);
@@ -26,9 +26,9 @@ fn get_adventures(game: Game) -> HashMap<i32, SimpleCallback> {
 /// Main loop
 fn main() {
 
-    let game = create_game();
+    let character = create_game();
 
-    println!("Welcome {}", game.get_character().name);
+    println!("Welcome {}", character.name);
     println!("====[ Adventures ]====");
 
     println!("1) Dark Heart");
@@ -40,5 +40,5 @@ fn main() {
         .read_line(&mut choice)
         .expect("Invalid input.");
 
-    start_adventure(choice, get_adventures(game));
+    start_adventure(choice, get_adventures(character));
 }
