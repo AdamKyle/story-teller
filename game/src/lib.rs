@@ -2,6 +2,7 @@ use std::io;
 use std::io::Write;
 use std::process;
 use character::charactersheet::{build_character, Character};
+use core::text_handeling::unwrap_str;
 
 /// Creates a character.
 ///
@@ -34,15 +35,36 @@ pub fn create_character() -> Character {
         let words: Vec<&str> = input.split_whitespace().collect();
 
         if words.is_empty() {
-            println!("Invalid input. Try again.");
-        } else if input.to_string() == "quit".to_string() {
-            println!("Bye now!");
-            process::exit(1);
+            println!("Invalid input.");
         } else {
-            name = input;
-            done = true;
+            let mut result: Vec<String> = Vec::new();
+
+            for word in words {
+                result.push(word.to_string());
+            }
+
+            if parse_input(result) {
+                name = input;
+                done = true;
+            }
         }
     }
 
     return build_character(name);
+}
+
+fn parse_input(words: Vec<String>) -> bool {
+    let mut words = words.iter();
+
+    let command = unwrap_str(words.next());
+
+    match command {
+        "quit" => {
+            println!("Really? Ok, bye!");
+            process::exit(1);
+        },
+        _ => {
+            return true;
+        }
+    }
 }

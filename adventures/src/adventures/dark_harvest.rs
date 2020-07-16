@@ -2,19 +2,13 @@ use std::io;
 use std::io::Write;
 use world::{Direction,  World, Action, Exit, Room, make_exit};
 use character::charactersheet::{Character, create_stats};
+use core::text_handeling::unwrap_str;
 
 
 #[derive(Debug)]
 pub struct Game {
     pub active: bool,
     pub game_character: Character,
-}
-
-fn unwrap_str<'a>(w: Option<&'a String>) -> &'a str {
-    match w {
-        Some(s) => s.as_str(),
-        None    => ""
-    }
 }
 
 /// Game implementation.
