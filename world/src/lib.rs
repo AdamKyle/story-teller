@@ -1,4 +1,5 @@
 use std::vec::Vec;
+use std::collections::HashMap;
 
 
 /// Directions the player can move in.
@@ -8,9 +9,30 @@ pub enum Direction {
 }
 
 /// Acceptable Actions a player can take.
-#[derive(Clone, Debug)]
+#[derive(Clone, PartialEq, Eq, Hash, Debug)]
 pub enum Action {
     Look, Explore, NONE
+}
+
+/// Do something on action
+///
+/// Actions are what the player can do.
+#[derive(Clone, Debug)]
+pub struct OnAction {
+    pub on_action: String,
+}
+
+impl OnAction {
+
+    pub fn new(on_action: String) -> Self {
+        OnAction {
+            on_action: on_action,
+        }
+    }
+
+    pub fn do_action(&mut self) {
+        println!("{}", self.on_action);
+    }
 }
 
 /// Room deffinition.
@@ -34,27 +56,55 @@ pub enum Action {
 ///
 /// ```
 ///
-///  All rooms must start from the rop down and based on the direction the plater takes
-///  we then find that room in the vector of exits and load it.
+/// All rooms must start from the rop down and based on the direction the plater takes
+/// we then find that room in the vector of exits and load it.
 ///
-///  Rooms do not have to link back to the previous room, because the world contains the current room
-///  and the previous room.
+/// Rooms do not have to link back to the previous room, because the world contains the current room
+/// and the previous room.
+///
+/// When a player does an action on a room we want to process that action, to do this we take in the action that
+/// the user types, for example: "look" or "explore", from there we loop over the rooms actions looking for
+/// that action. Because OnAction is an Option its suggested that you only set it to None, if the Action is also
+/// none. That indicates the layer has no actions in this room.
+///
+/// Sometimes a room needs to not allow the player to be able to go back. We allow you to set up
+/// a room that allows the player go back or not, if you say false to that and the player types "go back"
+/// The playr will then be given a reason that you specified.
+///
 #[derive(Clone, Debug)]
 pub struct Room {
     pub name: String,
     pub description: String,
-    pub actions: Vec<Action>,
+    pub actions: HashMap<Action, Option<OnAction>>,
     pub exits: Vec<Exit>,
+    pub go_back: GoBack,
+}
+
+#[derive(Clone, Debug)]
+pub struct GoBack {
+    pub can_go_back: bool,
+    pub reason: Option<String>,
+}
+
+impl GoBack {
+
+    pub fn new(can_go_back: bool, reason: Option<String>) -> Self {
+        GoBack {
+            can_go_back: can_go_back,
+            reason: reason,
+        }
+    }
 }
 
 
 impl Room {
-    pub fn new(name: String, description: String, actions: Vec<Action>, exits: Vec<Exit>) -> Self {
+    pub fn new(name: String, description: String, actions: HashMap<Action, Option<OnAction>>, exits: Vec<Exit>, go_back: GoBack) -> Self {
         Room {
             name: name,
             description: description,
             actions: actions,
             exits: exits,
+            go_back: go_back
         }
     }
 
@@ -83,8 +133,29 @@ impl Room {
 
         return None;
     }
+
+    pub fn do_action(&self, action: Action) {
+        let actions = self.actions.clone();
+
+        for (room_action, on_action) in actions {
+            if room_action == action && on_action.is_some() {
+                on_action.clone().unwrap().do_action();
+                return;
+            }
+        }
+
+        println!("Cannot do that action in this area.");
+    }
 }
 
+/// Handels the rooms exit.
+///
+/// Because rooms are built in a top down fashion, we have take in the direction and the
+/// room, which is an Option. we will panic if you have a direction but no room for the player to exit
+/// out too. The only time room should be None is if there is no exit from this room.
+///
+/// Rooms do not need to define exits going backwards. We assume that you can always go back
+/// to the previous room.
 #[derive(Clone, Debug)]
 pub struct Exit {
     pub direction: Direction,

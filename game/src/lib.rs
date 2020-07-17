@@ -3,7 +3,7 @@ use std::io::Write;
 use std::process;
 use character::charactersheet::{build_character, Character};
 use core::text_handeling::unwrap_str;
-use world::{World, Room, Direction};
+use world::{World, Room, Direction, Action};
 
 /// Core Game Struct
 ///
@@ -114,9 +114,12 @@ impl Game {
         match command {
             "help" => self.show_help(),
             "go" | "walk" | "move" => self.leave_room(command_one),
+            "look" => self.process_action(Action::Look),
+            "explore" => self.process_action(Action::Explore),
             "q" | "quit" | "exit" => self.quit_game(),
             _ => {
                 println!("What is: {}?", command);
+                return;
             },
         }
     }
@@ -134,6 +137,23 @@ impl Game {
         println!("\nReally? Ok. Bye.");
 
         self.active = false;
+    }
+
+    fn process_action(&mut self, action: Action) {
+        match action {
+            Action::Look => self.do_action(Action::Look),
+            Action::Explore => self.do_action(Action::Explore),
+            _ => {
+                println!("You have no idea how to do that action.");
+                return;
+            }
+        }
+    }
+
+    fn do_action(&mut self, action: Action) {
+        let room = self.current_room.clone().unwrap();
+
+        room.do_action(action);
     }
 
     fn leave_room(&mut self, command: &str) {
@@ -158,6 +178,18 @@ impl Game {
         let room = self.current_room.clone().unwrap();
 
         if direction_to_go == Direction::BACK {
+
+
+            if !room.go_back.can_go_back {
+                if room.go_back.reason.is_some() {
+                    println!("{}", room.go_back.reason.clone().unwrap());
+                    return;
+                } else {
+                    println!("You cannot go back. What now?");
+                    return;
+                }
+            }
+
             // Lets handel going backwards
             //
             // TODO: We need a way to store previvious rooms

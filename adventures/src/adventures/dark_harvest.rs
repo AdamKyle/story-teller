@@ -1,4 +1,5 @@
-use world::{Direction,  World, Action, Exit, Room, make_exit};
+use std::collections::HashMap;
+use world::{Direction,  World, Action, Exit, Room, OnAction, GoBack, make_exit};
 use character::charactersheet::{Character, create_stats};
 use game::Game;
 
@@ -53,9 +54,9 @@ fn dark_harvest_intro() -> World {
 
 
 fn make_starting_room() -> Room {
-    let mut actions = Vec::new();
+    let mut actions = HashMap::new();
 
-    actions.push(Action::Explore);
+    actions.insert(Action::Explore, Some(OnAction::new("You look around and see nothing of interest.".to_string())));
 
     let mut exits = Vec::new();
 
@@ -66,13 +67,14 @@ fn make_starting_room() -> Room {
         "The sound of birds, the rustling of the wind. The warmth of the sun in the blue sky. The grassy clearing is clear, trees to the east, a small path to the north. South an west contain ruins and broken peices of what appears to be concrete".to_string(),
         actions,
         exits,
+        GoBack::new(true, None),
     );
 }
 
 fn make_path_way() -> Room {
-    let mut actions = Vec::new();
+    let mut actions = HashMap::new();
 
-    actions.push(Action::NONE);
+    actions.insert(Action::NONE, None);
 
     let mut exits = Vec::new();
 
@@ -83,13 +85,14 @@ fn make_path_way() -> Room {
         "As you walk up the path the trees around seem to get thicker, taller and the area darker with shade. The path continues to go north.".to_string(),
         actions,
         exits,
+        GoBack::new(true, None),
     );
 }
 
 fn make_creek() -> Room {
-    let mut actions = Vec::new();
+    let mut actions = HashMap::new();
 
-    actions.push(Action::NONE);
+    actions.insert(Action::NONE, None);
 
     let mut exits = Vec::new();
 
@@ -103,5 +106,6 @@ fn make_creek() -> Room {
         r#"Continuing to follow the path, you come across a creek. The water is softly and quietly moving along its course. A prescence causes you to shudder and turn around. You see an old man standing behind you wearing a fedora red robes leaning on a staff. He looks at you for a moment before saying: "Hello there!""#.to_string(),
         actions,
         exits,
+        GoBack::new(false, Some("You are engaged in a conversation with a strange old man. Don't be rude.".to_string())),
     );
 }
