@@ -152,40 +152,43 @@ impl Game {
             }
         }
 
-        if !self.current_room.is_some() {
-            println!("There is no way out.");
-        } else {
+        // if we dont have a current room in this game,
+        // then we have broken some where and this should
+        // be allowed to panic.
+        let room = self.current_room.clone().unwrap();
 
-            let room = self.current_room.clone().unwrap();
-
-            if direction_to_go == Direction::BACK {
-
-                if !self.previous_room.is_some() {
-                    println!("You turn around to head back, only to discover there is no way back. What now?");
-                } else {
-                    let previous_room = self.current_room.clone().unwrap();
-                    let current_room = self.previous_room.clone().unwrap();
-
-                    self.set_previous_room(previous_room);
-                    self.set_current_room(current_room);
-
-                    let mut current_room = self.current_room.clone().unwrap();
-
-                    self.enter_new_room(current_room);
-                }
+        if direction_to_go == Direction::BACK {
+            // Lets handel going backwards
+            //
+            // TODO: We need a way to store previvious rooms
+            // As you move forward, then pop them off.
+            // previous rooms should be a vec of rooms that we pop
+            // and push rooms we have previously been in.
+            if !self.previous_room.is_some() {
+                println!("You turn around to head back, only to discover there is no way back. What now?");
             } else {
-                let new_room = room.exit(direction_to_go);
+                let previous_room = self.current_room.clone().unwrap();
+                let current_room = self.previous_room.clone().unwrap();
 
-                if new_room.is_some() {
-                    self.set_previous_room(room);
-                    self.set_current_room(new_room.clone().unwrap());
+                self.set_previous_room(previous_room);
+                self.set_current_room(current_room);
 
-                    let mut current_room = self.current_room.clone().unwrap();
+                let current_room = self.current_room.clone().unwrap();
 
-                    self.enter_new_room(current_room);
-                } else {
-                    println!("You can't go that way.");
-                }
+                self.enter_new_room(current_room);
+            }
+        } else {
+            let new_room = room.exit(direction_to_go);
+
+            if new_room.is_some() {
+                self.set_previous_room(room);
+                self.set_current_room(new_room.clone().unwrap());
+
+                let current_room = self.current_room.clone().unwrap();
+
+                self.enter_new_room(current_room);
+            } else {
+                println!("You can't go that way.");
             }
         }
     }
