@@ -76,14 +76,31 @@ fn make_path_way() -> Room {
 
     let mut exits = Vec::new();
 
+    exits.push(make_exit(Direction::N, make_creek()));
+
+    return Room::new(
+        "Path".to_string(),
+        "As you walk up the path the trees around seem to get thicker, taller and the area darker with shade. The path continues to go north.".to_string(),
+        actions,
+        exits,
+    );
+}
+
+fn make_creek() -> Room {
+    let mut actions = Vec::new();
+
+    actions.push(Action::NONE);
+
+    let mut exits = Vec::new();
+
     exits.push(Exit {
         direction: Direction::NONE,
         room: None
     });
 
     return Room::new(
-        "Path".to_string(),
-        "As you walk up the path the trees around seem to get thicker, taller and the area darker with shade.".to_string(),
+        "River".to_string(),
+        r#"Continuing to follow the path, you come across a creek. The water is softly and quietly moving along its course. A prescence causes you to shudder and turn around. You see an old man standing behind you wearing a fedora red robes leaning on a staff. He looks at you for a moment before saying: "Hello there!""#.to_string(),
         actions,
         exits,
     );
