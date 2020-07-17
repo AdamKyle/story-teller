@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 character = {path = "../character"}
 core      = {path = "../core"}
+world     = {path = "../world"}

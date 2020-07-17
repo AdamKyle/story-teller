@@ -4,6 +4,12 @@ use std::io::Write;
 use std::process;
 use rand::Rng;
 
+
+
+/// Defeinition of a character in the game.
+///
+/// All characters must have a name, other options can be
+/// optional.
 #[derive(Clone, Debug)]
 pub struct Character {
     pub name: String,
@@ -12,6 +18,7 @@ pub struct Character {
     pub race: Option<Race>,
 }
 
+/// Stats of a character.
 #[derive(Clone, Debug)]
 pub struct Stats {
     pub int: i32,
@@ -21,6 +28,7 @@ pub struct Stats {
     pub dur: i32,
 }
 
+/// Implementation of stats.
 impl Stats {
     pub fn new(str: i32, int: i32, dex: i32, chr: i32, dur: i32) -> Self {
         Stats {
@@ -33,11 +41,13 @@ impl Stats {
     }
 }
 
+/// Character race.
 #[derive(Clone, Debug)]
 pub struct Race {
     pub name: String,
 }
 
+/// Implementation of race.
 impl Race {
     pub fn new(name: String) -> Self {
         Race {
@@ -46,11 +56,13 @@ impl Race {
     }
 }
 
+/// Character class.
 #[derive(Clone, Debug)]
 pub struct Class {
     pub name: String,
 }
 
+/// Implementation of class.
 impl Class {
     pub fn new(name: String) -> Self {
         Class {
@@ -59,6 +71,10 @@ impl Class {
     }
 }
 
+/// Build a character based off name.
+///
+/// This is great for when we want to get going. All we care
+/// about is the name at this point.
 pub fn build_character(name: String) -> Character {
     Character {
         name: name,
@@ -68,11 +84,20 @@ pub fn build_character(name: String) -> Character {
     }
 }
 
+/// Create the stats for the character and return that character.
+///
+/// We generate a set of intgers based on the number of stats for the character.
+/// from there we can spit that out and then enter a loop asking you what you wnat to do.
+/// repeat till valid input.
+///
+/// If we encounter re-roll, its the same process all over again with a new set of random numbers.
+///
+/// All stats are considered 3d6. Your lowest possible value is 3 and the highest beign 18.
 pub fn create_stats(character: Character) -> Character {
     let mut stats: Vec<i32> = Vec::new();
 
     for _i in 0..5 {
-        stats.push(rand::thread_rng().gen_range(1,18));
+        stats.push(rand::thread_rng().gen_range(3,18));
     }
 
     println!("\nRolled stats: {0:?}", stats);

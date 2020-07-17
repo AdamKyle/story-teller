@@ -6,6 +6,7 @@ use crate::core::process_call_backs::SimpleCallback;
 pub fn make_adventure_list(adventure_list: Vec<SimpleCallback>) -> HashMap<i32, SimpleCallback> {
     let mut adventures = HashMap::new();
 
+    // Matches the input, for example: 1) Adventure name, the 1 you would enter is this count.
     let mut count = 1;
 
     for adventure in adventure_list {
