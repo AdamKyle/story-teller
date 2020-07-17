@@ -16,6 +16,7 @@ use world::{World, Room, Direction, Action};
 pub struct Game {
     pub active: bool,
     pub game_character: Character,
+    pub stat_bonuses: Vec<i32>,
     pub current_room: Option<Room>,
     pub previous_room: Option<Room>
 }
@@ -140,9 +141,10 @@ impl Game {
     }
 
     fn process_action(&mut self, action: Action) {
+
         match action {
-            Action::Look => self.do_action(Action::Look),
-            Action::Explore => self.do_action(Action::Explore),
+            Action::Look => self.do_action(Action::Look, self.game_character.stats.clone().unwrap().int),
+            Action::Explore => self.do_action(Action::Explore, self.game_character.stats.clone().unwrap().int),
             _ => {
                 println!("You have no idea how to do that action.");
                 return;
@@ -150,10 +152,12 @@ impl Game {
         }
     }
 
-    fn do_action(&mut self, action: Action) {
+    fn do_action(&mut self, action: Action, stat_value: i32) {
         let room = self.current_room.clone().unwrap();
 
-        room.do_action(action);
+        let bonus = self.stat_bonuses[stat_value as usize];
+
+        room.do_action(action, bonus);
     }
 
     fn leave_room(&mut self, command: &str) {
@@ -230,7 +234,7 @@ impl Game {
         println!("Location: {}", current_room.name());
         println!("\n");
         println!("{}", current_room.describe());
-        println!("What do you do? (type help for commands)");
+        println!("\nWhat do you do? (type help for commands)");
     }
 }
 

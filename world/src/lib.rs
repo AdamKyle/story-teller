@@ -1,5 +1,6 @@
 use std::vec::Vec;
 use std::collections::HashMap;
+use rand::Rng;
 
 
 /// Directions the player can move in.
@@ -17,16 +18,23 @@ pub enum Action {
 /// Do something on action
 ///
 /// Actions are what the player can do.
+///
+/// the on_action is what happens when the action is succesffull.
+/// the action is only successful if the dc_check passes.
+///
+/// If the Action does not have a dc_check then we should just do the on_action.
 #[derive(Clone, Debug)]
 pub struct OnAction {
     pub on_action: String,
+    pub dc_check: Option<i32>,
 }
 
 impl OnAction {
 
-    pub fn new(on_action: String) -> Self {
+    pub fn new(on_action: String, dc_check: Option<i32>) -> Self {
         OnAction {
             on_action: on_action,
+            dc_check: dc_check,
         }
     }
 
@@ -134,12 +142,27 @@ impl Room {
         return None;
     }
 
-    pub fn do_action(&self, action: Action) {
+    pub fn do_action(&self, action: Action, bonus: i32) {
         let actions = self.actions.clone();
 
         for (room_action, on_action) in actions {
             if room_action == action && on_action.is_some() {
+
+                if on_action.clone().unwrap().dc_check.is_some() {
+                    let roll = rand::thread_rng().gen_range(1,20) + bonus;
+
+                    let dc_check = on_action.clone().unwrap().dc_check.unwrap();
+
+                    if roll > dc_check {
+                        println!("Upon your roll of a: {}", roll);
+                        on_action.clone().unwrap().do_action()
+                    } else {
+                        println!("Failed to do the action. You failed the DC check: {}. You can try again.", roll);
+                    }
+                }
+
                 on_action.clone().unwrap().do_action();
+
                 return;
             }
         }

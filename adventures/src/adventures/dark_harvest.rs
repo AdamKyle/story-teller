@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use world::{Direction,  World, Action, Exit, Room, OnAction, GoBack, make_exit};
 use character::charactersheet::{Character, create_stats};
 use game::Game;
+use core::stat_bonus::create_all_stat_bonuses;
 
 /// This is the actual game adventure It's self.
 ///
@@ -18,6 +19,7 @@ pub fn run_dark_harvest(mut character: Character) {
     let mut game = Game {
         active: true,
         game_character: character,
+        stat_bonuses: create_all_stat_bonuses(),
         current_room: None,
         previous_room: None,
     };
@@ -56,7 +58,7 @@ fn dark_harvest_intro() -> World {
 fn make_starting_room() -> Room {
     let mut actions = HashMap::new();
 
-    actions.insert(Action::Explore, Some(OnAction::new("You look around and see nothing of interest.".to_string())));
+    actions.insert(Action::Explore, Some(OnAction::new("You look around and see nothing of interest.".to_string(), None)));
 
     let mut exits = Vec::new();
 
