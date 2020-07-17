@@ -2,9 +2,9 @@ use std::vec::Vec;
 
 
 /// Directions the player can move in.
-#[derive(Clone, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum Direction {
-    N, S, W, E, NONE
+    N, S, W, E, NONE, BACK
 }
 
 /// Acceptable Actions a player can take.
@@ -47,6 +47,7 @@ pub struct Room {
     pub exits: Vec<Exit>,
 }
 
+
 impl Room {
     pub fn new(name: String, description: String, actions: Vec<Action>, exits: Vec<Exit>) -> Self {
         Room {
@@ -63,6 +64,24 @@ impl Room {
 
     pub fn name(&self) -> &String {
         return &self.name;
+    }
+
+    pub fn exit(&self, direction: Direction) -> Option<Room> {
+
+        for exit in &self.exits {
+            if exit.direction == direction {
+
+                let next_room = exit.room.clone();
+
+                // I feel confident that if we fail here, someone messed up.
+                // This would mean you have a room with a exit but no room for the player
+                // to go too. So we should allow the system to panic.
+                return Some(next_room.unwrap());
+            }
+        }
+
+
+        return None;
     }
 }
 

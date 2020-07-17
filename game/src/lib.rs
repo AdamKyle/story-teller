@@ -3,7 +3,7 @@ use std::io::Write;
 use std::process;
 use character::charactersheet::{build_character, Character};
 use core::text_handeling::unwrap_str;
-use world::{World, Room};
+use world::{World, Room, Direction};
 
 /// Core Game Struct
 ///
@@ -59,6 +59,14 @@ impl Game {
         self.current_room = Some(room);
     }
 
+    fn set_current_room(&mut self, room: Room) {
+        self.current_room = Some(room);
+    }
+
+    fn set_previous_room(&mut self, room: Room) {
+        self.previous_room = Some(room);
+    }
+
     fn parse_input(&mut self, input: String) {
         let words: Vec<&str> = input.split_whitespace().collect();
 
@@ -100,11 +108,12 @@ impl Game {
             return;
         }
 
-        //let command_one = unwrap_str(words.next());
-        //let command_two = unwrap_str(words.next());
+        let command_one = unwrap_str(words.next());
+        let command_two = unwrap_str(words.next());
 
         match command {
             "help" => self.show_help(),
+            "go" | "walk" | "move" => self.leave_room(command_one),
             "q" | "quit" | "exit" => self.quit_game(),
             _ => {
                 println!("What is: {}?", command);
@@ -115,7 +124,7 @@ impl Game {
     fn show_help(&mut self) {
         println!("\n-------------------");
         println!("\nMenu: Help");
-        println!("\nMovement: Characters can move by typing: go DIRECTION where DIRECTION equals north, south, east or west.");
+        println!("\nMovement: Characters can move by typing: go/walk DIRECTION where DIRECTION equals n(orth), s(outh), e(ast) or w(est) or back.");
         println!("\nActions: you can type an action: ACTION where action is look or explore.");
         println!("\nQuitting: You can quit by typing: q, quit or exit.");
         println!("\n-------------------");
@@ -125,6 +134,68 @@ impl Game {
         println!("\nReally? Ok. Bye.");
 
         self.active = false;
+    }
+
+    fn leave_room(&mut self, command: &str) {
+
+        let direction_to_go: Direction;
+
+        match command {
+            "n" | "north" => direction_to_go = Direction::N,
+            "s" | "south" => direction_to_go = Direction::S,
+            "e" | "east" => direction_to_go = Direction::E,
+            "w" | "west" => direction_to_go = Direction::W,
+            "back" => direction_to_go = Direction::BACK,
+            _ => {
+                println!("You cannot go that way. Please try again.");
+                return;
+            }
+        }
+
+        if !self.current_room.is_some() {
+            println!("There is no way out.");
+        } else {
+
+            let room = self.current_room.clone().unwrap();
+
+            if direction_to_go == Direction::BACK {
+
+                if !self.previous_room.is_some() {
+                    println!("You turn around to head back, only to discover there is no way back. What now?");
+                } else {
+                    let previous_room = self.current_room.clone().unwrap();
+                    let current_room = self.previous_room.clone().unwrap();
+
+                    self.set_previous_room(previous_room);
+                    self.set_current_room(current_room);
+
+                    let mut current_room = self.current_room.clone().unwrap();
+
+                    self.enter_new_room(current_room);
+                }
+            } else {
+                let new_room = room.exit(direction_to_go);
+
+                if new_room.is_some() {
+                    self.set_previous_room(room);
+                    self.set_current_room(new_room.clone().unwrap());
+
+                    let mut current_room = self.current_room.clone().unwrap();
+
+                    self.enter_new_room(current_room);
+                } else {
+                    println!("You can't go that way.");
+                }
+            }
+        }
+    }
+
+    fn enter_new_room(&mut self, current_room: Room) {
+        println!("\n");
+        println!("Location: {}", current_room.name());
+        println!("\n");
+        println!("{}", current_room.describe());
+        println!("What do you do? (type help for commands)");
     }
 }
 

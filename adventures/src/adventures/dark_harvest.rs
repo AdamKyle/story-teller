@@ -33,12 +33,8 @@ fn dark_harvest_intro() -> World {
     closely. Only as a reference.
     ");
     println!("Story:");
-    println!("
-    You awaken in the middle of a field. Covered in blood, you have no idea how you got here. As you stand and adjust your eyes to the
-    blinding sun, you feel your body for wounds, to find the source of the bleeding. No wounds present them selves.\n
-    \n
-    The wind kicks up and a voice is heard, like a whisper moving through the shadows, Who are you?
-    ");
+    println!("\nYou awaken in the middle of a field. Covered in blood, you have no idea how you got here. As you stand and adjust your eyes to the blinding sun, you feel your body for wounds, to find the source of the bleeding. No wounds present them selves.");
+    println!(r#"The wind kicks up and a voice is heard, like a whisper moving through the shadows, "Who are you?""#);
     println!("\n\nAdventure Difficulty: Easy");
     println!("Adventure Lenth:      Medium");
     println!("=======================");
