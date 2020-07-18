@@ -3,7 +3,7 @@ use std::io::Write;
 use std::process;
 use character::charactersheet::{build_character, Character};
 use core::text_handeling::unwrap_str;
-use world::{World, Room, Direction, Action};
+use world::{World, Room, Direction, Action, Converse};
 
 /// Core Game Struct
 ///
@@ -117,6 +117,7 @@ impl Game {
             "go" | "walk" | "move" => self.leave_room(command_one),
             "look" => self.process_action(Action::Look),
             "explore" => self.process_action(Action::Explore),
+            "talk" | "converse" => self.process_action(Action::Talk),
             "q" | "quit" | "exit" => self.quit_game(),
             _ => {
                 println!("What is: {}?", command);
@@ -145,6 +146,7 @@ impl Game {
         match action {
             Action::Look => self.do_action(Action::Look, self.game_character.stats.clone().unwrap().int),
             Action::Explore => self.do_action(Action::Explore, self.game_character.stats.clone().unwrap().int),
+            Action::Talk => self.do_action(Action::Talk, self.game_character.stats.clone().unwrap().chr),
             _ => {
                 println!("You have no idea how to do that action.");
                 return;
@@ -155,9 +157,29 @@ impl Game {
     fn do_action(&mut self, action: Action, stat_value: i32) {
         let room = self.current_room.clone().unwrap();
 
-        let bonus = self.stat_bonuses[stat_value as usize];
+        if action == Action::Talk && room.conversation.is_some() {
+            self.talk(room.conversation);
+        } else {
+            let bonus = self.stat_bonuses[stat_value as usize];
 
-        room.do_action(action, bonus);
+            room.do_action(action, bonus);
+        }
+    }
+
+    fn talk(&mut self, conversation: Option<Converse>) {
+
+        if (conversation.clone().is_some()) {
+            println!("\n{}", conversation.clone().unwrap().line);
+
+            let choices = conversation.clone().unwrap().choices;
+
+            if choices.is_some() {
+                conversation.clone().unwrap().process_conversation();
+            }
+
+        } else {
+            println!("Sure, talk to your self. That's not crazy at all. I do it. All the time.");
+        }
     }
 
     fn leave_room(&mut self, command: &str) {

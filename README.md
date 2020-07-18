@@ -62,11 +62,11 @@ Actions are done through nouns. For example: `walk north`.
 | Look (when in an adventure) |  look | N/A | `> look` |
 | Movement (when in an adventure) |    go/walk  |  n(orth), s(outh),e(ast),w(est), back | `> walk north`, `> go s`, `>go back` |
 | Explore (when in an adventure) | explore |    N/A | `> explore` |
+| Talk (when in adventure) | converse, talk | N/A | `> talk` or `> converse` |
 | Quit  (at any time)| q, quit, exit| N/A | type: `quit` or `q` or `exit` |
 | Accept | accept | N/A | `> accept` |
 | Re-roll (only in character stat creation) | re-roll | N/A | `> re-roll` |
 | Help (when in an adventure) | help | N/A | `> help` |
-
 
 ## Current Adventures:
 

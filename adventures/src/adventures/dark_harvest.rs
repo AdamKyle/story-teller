@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use world::{Direction,  World, Action, Exit, Room, OnAction, GoBack, make_exit};
+use world::{Direction,  World, Action, Exit, Room, OnAction, GoBack, Converse, Choices, make_exit};
 use character::charactersheet::{Character, create_stats};
 use game::Game;
 use core::stat_bonus::create_all_stat_bonuses;
@@ -58,7 +58,7 @@ fn dark_harvest_intro() -> World {
 fn make_starting_room() -> Room {
     let mut actions = HashMap::new();
 
-    actions.insert(Action::Explore, Some(OnAction::new("You look around and see nothing of interest.".to_string(), None)));
+    actions.insert(Action::Explore, Some(OnAction::new("You look around and see nothing of interest. Exploring to the South and west show more of the ruins. They look like modern day buildings, or the left overs after nature scavanged them. After man abandonded them.".to_string(), None)));
 
     let mut exits = Vec::new();
 
@@ -70,13 +70,14 @@ fn make_starting_room() -> Room {
         actions,
         exits,
         GoBack::new(true, None),
+        None,
     );
 }
 
 fn make_path_way() -> Room {
     let mut actions = HashMap::new();
 
-    actions.insert(Action::NONE, None);
+    actions.insert(Action::Explore, Some(OnAction::new("You look around the path, over at the trees and up at the sky. You explore your surroundings and feel like someone is watching you. Perhaps their up ahead, or behind you, or maybe you're just going crazy.".to_string(), None)));
 
     let mut exits = Vec::new();
 
@@ -88,13 +89,14 @@ fn make_path_way() -> Room {
         actions,
         exits,
         GoBack::new(true, None),
+        None
     );
 }
 
 fn make_creek() -> Room {
     let mut actions = HashMap::new();
 
-    actions.insert(Action::NONE, None);
+    actions.insert(Action::Talk, Some(OnAction::new("You enter the conversation.".to_string(), None)));
 
     let mut exits = Vec::new();
 
@@ -103,11 +105,42 @@ fn make_creek() -> Room {
         room: None
     });
 
+    let mut answer = Vec::new();
+
+    let mut second_answer = Vec::new();
+
+    second_answer.push(
+        Choices::new(
+            "Not from here ...".to_string(),
+            Some(
+                Converse::new(
+                    "I can see that. We should get you inside before it rains. Follow me. Its a short distance to my house. Come along your safe.".to_string(),
+                    None,
+                )
+            )
+        )
+    );
+
+    answer.push(
+        Choices::new(
+            "Who are you?".to_string(),
+            Some(
+                Converse::new(
+                    "Who am I? I am the Poet. Who are you child? Dont speak your name, it sits on my toungue. Where are you from?".to_string(),
+                    Some(second_answer),
+                )
+            )
+        )
+    );
+
+
+
     return Room::new(
         "River".to_string(),
         r#"Continuing to follow the path, you come across a creek. The water is softly and quietly moving along its course. A prescence causes you to shudder and turn around. You see an old man standing behind you wearing a fedora red robes leaning on a staff. He looks at you for a moment before saying: "Hello there!""#.to_string(),
         actions,
         exits,
-        GoBack::new(false, Some("You are engaged in a conversation with a strange old man. Don't be rude.".to_string())),
+        GoBack::new(false, Some("There is something preventing you from going back. Is there something to do here?".to_string())),
+        Some(Converse::new(r#"The old man looks at you and asks: "Are you ok? Are you lost?""#.to_string(), Some(answer)))
     );
 }
