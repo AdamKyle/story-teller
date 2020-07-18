@@ -58,7 +58,7 @@ fn dark_harvest_intro() -> World {
 fn make_starting_room() -> Room {
     let mut actions = HashMap::new();
 
-    actions.insert(Action::Explore, Some(OnAction::new("You look around and see nothing of interest. Exploring to the South and west show more of the ruins. They look like modern day buildings, or the left overs after nature scavanged them. After man abandonded them.".to_string(), None)));
+    actions.insert(Action::Explore, Some(OnAction::new("You look around and see nothing of interest. Exploring to the South and West show more of the ruins. They look like modern day buildings, or the left overs after nature scavanged them. After man abandonded them.".to_string(), None)));
 
     let mut exits = Vec::new();
 
@@ -66,7 +66,7 @@ fn make_starting_room() -> Room {
 
     return Room::new(
         "Grassy Clearing".to_string(),
-        "The sound of birds, the rustling of the wind. The warmth of the sun in the blue sky. The grassy clearing is clear, trees to the east, a small path to the north. South an west contain ruins and broken peices of what appears to be concrete".to_string(),
+        "The sound of birds, the rustling of the wind. The warmth of the sun in the blue sky. The grassy clearing is clear, trees to the east, a small path to the north. South an West contain ruins and broken peices of what appears to be concrete".to_string(),
         actions,
         exits,
         GoBack::new(true, None),

@@ -128,11 +128,10 @@ impl Game {
 
     fn show_help(&mut self) {
         println!("\n-------------------");
-        println!("\nMenu: Help");
-        println!("\nMovement: Characters can move by typing: go/walk DIRECTION where DIRECTION equals n(orth), s(outh), e(ast) or w(est) or back.");
-        println!("\nActions: you can type an action: ACTION where action is look or explore.");
-        println!("\nQuitting: You can quit by typing: q, quit or exit.");
-        println!("\n-------------------");
+        println!("- Movement: Characters can move by typing: go/walk DIRECTION where DIRECTION equals n(orth), s(outh), e(ast) or w(est) or back.");
+        println!("- Actions: you can type an action as such: ACTION where action is look, explore or talk.");
+        println!("- Quitting: You can quit by typing: q, quit or exit.");
+        println!("-------------------");
     }
 
     fn quit_game(&mut self) {
