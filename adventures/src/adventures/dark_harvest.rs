@@ -105,8 +105,36 @@ fn make_creek() -> Room {
         room: None
     });
 
+
+    return Room::new(
+        "River".to_string(),
+        r#"Continuing to follow the path, you come across a creek. The water is softly and quietly moving along its course. A prescence causes you to shudder and turn around. You see an old man standing behind you wearing a fedora red robes leaning on a staff. He looks at you for a moment before saying: "Hello there!""#.to_string(),
+        actions,
+        exits,
+        GoBack::new(false, Some("There is something preventing you from going back. Is there something to do here?".to_string())),
+        Some(Converse::new(r#"The old man looks at you and asks: "Are you ok? Are you lost?""#.to_string(), Some(make_answer(make_nested_answer()))))
+    );
+}
+
+fn make_answer(nested_answer: Vec<Choices>) -> Vec<Choices> {
     let mut answer = Vec::new();
 
+    answer.push(
+        Choices::new(
+            "Who are you?".to_string(),
+            Some(
+                Converse::new(
+                    "Who am I? I am the Poet. Who are you child? Dont speak your name, it sits on my toungue. Where are you from?".to_string(),
+                    Some(nested_answer),
+                )
+            )
+        )
+    );
+
+    return answer;
+}
+
+fn make_nested_answer() -> Vec<Choices> {
     let mut second_answer = Vec::new();
 
     second_answer.push(
@@ -121,26 +149,5 @@ fn make_creek() -> Room {
         )
     );
 
-    answer.push(
-        Choices::new(
-            "Who are you?".to_string(),
-            Some(
-                Converse::new(
-                    "Who am I? I am the Poet. Who are you child? Dont speak your name, it sits on my toungue. Where are you from?".to_string(),
-                    Some(second_answer),
-                )
-            )
-        )
-    );
-
-
-
-    return Room::new(
-        "River".to_string(),
-        r#"Continuing to follow the path, you come across a creek. The water is softly and quietly moving along its course. A prescence causes you to shudder and turn around. You see an old man standing behind you wearing a fedora red robes leaning on a staff. He looks at you for a moment before saying: "Hello there!""#.to_string(),
-        actions,
-        exits,
-        GoBack::new(false, Some("There is something preventing you from going back. Is there something to do here?".to_string())),
-        Some(Converse::new(r#"The old man looks at you and asks: "Are you ok? Are you lost?""#.to_string(), Some(answer)))
-    );
+    return second_answer;
 }

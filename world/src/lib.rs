@@ -81,6 +81,9 @@ impl OnAction {
 /// a room that allows the player go back or not, if you say false to that and the player types "go back"
 /// The playr will then be given a reason that you specified.
 ///
+/// The room also contains a conversation. Converse struct is made of lines and choices, the choices are then
+/// made of a line and converse struct. this is then processed by calling the process_conversation of a Converse root.
+/// Conversations allow the player to interact with the NPC in front of them.
 #[derive(Clone, Debug)]
 pub struct Room {
     pub name: String,
@@ -91,6 +94,13 @@ pub struct Room {
     pub conversation: Option<Converse>,
 }
 
+/// Converseations consisting of a line and possible choices.
+///
+/// The line is what the NPC sais. The choices are a Option of vector choices.
+/// each choice also has a choice, this is for the player to see and a optional conversation (Converse)
+/// struct called next.
+///
+/// TODO: Choices should make next mandatory, since you cant have a choice without a response.
 #[derive(Clone, Debug)]
 pub struct Converse {
     pub line: String,
