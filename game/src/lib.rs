@@ -3,7 +3,10 @@ use std::io::Write;
 use std::process;
 use character::charactersheet::{build_character, Character};
 use core::text_handeling::unwrap_str;
-use world::{World, Room, Direction, Action, Converse};
+use world::World;
+use world::room::{Room, Direction};
+use world::actions::Action;
+use world::conversation::Converse;
 
 /// Core Game Struct
 ///
@@ -167,7 +170,7 @@ impl Game {
 
     fn talk(&mut self, conversation: Option<Converse>) {
 
-        if (conversation.clone().is_some()) {
+        if conversation.clone().is_some() {
             println!("\n{}", conversation.clone().unwrap().line);
 
             let choices = conversation.clone().unwrap().choices;

@@ -1,5 +1,8 @@
 use std::collections::HashMap;
-use world::{Direction,  World, Action, Exit, Room, OnAction, GoBack, Converse, Choices, make_exit};
+use world::World;
+use world::room::{Direction, Exit, Room, GoBack, make_exit};
+use world::actions::{Action, OnAction};
+use world::conversation::{Converse, Choices};
 use character::charactersheet::{Character, create_stats};
 use game::Game;
 use core::stat_bonus::create_all_stat_bonuses;
