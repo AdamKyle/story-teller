@@ -100,9 +100,21 @@ pub fn create_stats(character: Character) -> Character {
         stats.push(rand::thread_rng().gen_range(3,18));
     }
 
-    println!("\nRolled stats: {0:?}", stats);
-    println!("All stats are rolled on a 3d6 and corelate to: str, int, dex, chr, dur respectivly.");
+    println!("\nRolled stats:");
+    println!("===============");
+
+    let mut count = 0;
+    let stat_names = vec!["str", "int", "dex", "chr", "dur"];
+
+    for stat in &stats {
+
+        println!("{}: {}", stat_names[count], stat);
+        count = count + 1;
+    }
+
+    println!("===============");
     println!("What would you like to do? (You can type: accept, re-roll, explain or quit)");
+    println!("\n");
 
     let mut done = false;
 
@@ -134,8 +146,20 @@ pub fn create_stats(character: Character) -> Character {
                 stats.push(rand::thread_rng().gen_range(1,18));
             }
 
-            println!("\nRolled stats: {0:?}", stats);
+            println!("\nRolled stats:");
+            println!("===============");
+
+            let mut count = 0;
+
+            for stat in &stats {
+
+                println!("{}: {}", stat_names[count], stat);
+                count = count + 1;
+            }
+
+            println!("===============");
             println!("What would you like to do? (You can type: accept, re-roll, explain or quit)");
+            println!("\n");
 
         } else if input.to_string() == "accept".to_string() {
             done = true;

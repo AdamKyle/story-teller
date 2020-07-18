@@ -33,10 +33,12 @@ fn main() {
     let character = create_character();
 
     println!("\nWelcome {}, the available adventures for you are:", character.name);
-    println!("\n\n========[ Adventures ]========");
-    println!("\n1) Dark Harvest");
-    println!("\n\n==============================");
-    println!("\nPlease Choose by typing the number beside the name: (You can also type quit to exit) ");
+    println!("\n========[ Adventures ]========");
+    println!("1) Dark Harvest");
+    println!("==============================");
+    println!("Please Choose by typing the number beside the name: (You can also type quit to exit) ");
+
+    println!("\nOnce you select an adventure you can then setup your character by selecting a race, class and set your stats.");
 
     let mut done = false;
 
