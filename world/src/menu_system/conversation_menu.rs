@@ -10,7 +10,7 @@ pub fn process(options: HashMap<i32, String>, choices: Vec<Choices>) -> Option<C
 
     let mut done: bool = false;
 
-    let choice_selection: Option<Converse> = None;
+    let mut choice_selection: Option<Converse> = None;
 
     while !done {
         print!("> ");
@@ -41,7 +41,7 @@ pub fn process(options: HashMap<i32, String>, choices: Vec<Choices>) -> Option<C
                 done = true;
             }
 
-            let choice_selection = parse_choice_input(result.clone(), options.clone(), choices.clone());
+            choice_selection = parse_choice_input(result.clone(), options.clone(), choices.clone());
 
             if choice_selection.is_some() {
                 done = true;

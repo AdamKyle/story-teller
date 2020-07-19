@@ -65,7 +65,7 @@ impl Converse {
         display_menu(&mut options);
 
         let next = process(options, choices.clone());
-
+        
         // The user might have exited from a sub menu,
         // such as a choice. This would cancel the whole: talk
         // command making next now be None and causing a panic.
