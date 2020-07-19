@@ -128,11 +128,9 @@ fn make_answer(nested_answer: Vec<Choices>) -> Vec<Choices> {
     answer.push(
         Choices::new(
             "Who are you?".to_string(),
-            Some(
-                Converse::new(
-                    "Who am I? I am the Poet. Who are you child? Dont speak your name, it sits on my toungue. Where are you from?".to_string(),
-                    Some(nested_answer),
-                )
+            Converse::new(
+                "Who am I? I am the Poet. Who are you child? Dont speak your name, it sits on my toungue. Where are you from?".to_string(),
+                Some(nested_answer),
             )
         )
     );
@@ -146,11 +144,9 @@ fn make_nested_answer() -> Vec<Choices> {
     second_answer.push(
         Choices::new(
             "Not from here ...".to_string(),
-            Some(
-                Converse::new(
-                    "I can see that. We should get you inside before it rains. Follow me. Its a short distance to my house. Come along your safe.".to_string(),
-                    None,
-                )
+            Converse::new(
+                "I can see that. We should get you inside before it rains. Follow me. Its a short distance to my house. Come along your safe.".to_string(),
+                None,
             )
         )
     );

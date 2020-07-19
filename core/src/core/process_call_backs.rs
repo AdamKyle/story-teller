@@ -34,6 +34,6 @@ impl SimpleCallback {
 
     /// Process the callback. Simply calls the callback.
     pub fn process(self) {
-        (self.callback)()
+        (self.callback)();
     }
 }

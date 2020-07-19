@@ -242,7 +242,9 @@ impl Game {
             }
         }
 
-        found_person.unwrap().conversation.process_conversation();
+        if (found_person.is_some()) {
+            found_person.unwrap().conversation.process_conversation();
+        }
     }
 
     fn parse_choice_input(&mut self, words: Vec<String>, options: HashMap<i32, Person>) -> Option<Person> {
@@ -262,9 +264,16 @@ impl Game {
 
             },
             Err(_e) => {
-                println!("Not a valid choice.");
-
-                return None;
+                match input {
+                    "quit" | "q" | "exit" => {
+                        println!("Conversation over.");
+                        return None;
+                    },
+                    _ => {
+                        println!("invalid input");
+                        return None;
+                    }
+                }
             }
         }
     }
@@ -276,7 +285,7 @@ impl Game {
 
         match command {
             "quit" | "q" | "exit" => {
-                println!("You abruptly left the conversation.");
+                println!("You turn away from the people.");
                 return true;
             },
             _ => {

@@ -1,8 +1,11 @@
 use std::io;
 use std::io::Write;
 use std::vec::Vec;
+use std::boxed::Box;
 use std::collections::HashMap;
 use core::text_handeling::unwrap_str;
+use core::process_call_backs::SimpleCallback;
+use core::menu::{display_menu, parse_quit};
 
 /// Converseations consisting of a line and possible choices.
 ///
@@ -13,7 +16,18 @@ use core::text_handeling::unwrap_str;
 /// This is considered, much like the way rooms are built, to be a top down recursive struct
 /// that is traversed until the final Converse with no choice is reached.
 ///
-/// TODO: Choices should make next mandatory, since you cant have a choice without a response.
+/// A typical conversation structure looks as such:
+///
+///             Converse
+///                | - Line that starts conversation
+///   Vec<Choices> - choice, next (optional converse) - TODO: Make non optional
+///                |
+///    -------------------------
+///     |          |        |
+///  converse   converse  converse
+///
+/// When process_conversation is called, we recurisvely call the process_conversation
+/// until a Converse doesnt have a choice. All Choices on a Converse object are Optional.
 #[derive(Clone, Debug)]
 pub struct Converse {
     pub line: String,
@@ -45,117 +59,18 @@ impl Converse {
 
         let choices = self.choices.clone().unwrap();
 
-        let mut options = HashMap::new();
+        let mut options = conversation_menu(choices.clone());
 
-        let mut count: i32 = 1;
+        display_menu(&mut options);
 
-        println!("\n===== [Choices] =====");
+        let next = proccess(options, choices.clone());
 
-        for choice in &choices {
-            options.insert(count, choice.clone().choice);
-
-            print!("{}) {}", count, choice.clone().choice);
-
-            count = count + 1;
-        }
-
-        println!("\n=====================");
-        println!("Choose one by typing the number or q, quit or exit to leave the conversation.");
-        println!("\n");
-
-        let mut done: bool = false;
-
-        let mut next: Option<Converse> = None;
-
-        while !done {
-            print!("> ");
-
-            io::stdout().flush().expect("Error flushing stdout!");
-
-            let mut input = String::new();
-
-            io::stdin().read_line(&mut input)
-                       .expect("Error reading stdin!");
-
-            if input.ends_with('\n') {
-               input.pop();
-            }
-
-            let words: Vec<&str> = input.split_whitespace().collect();
-
-            if words.is_empty() {
-                println!("Invalid input.");
-            } else {
-                let mut result: Vec<String> = Vec::new();
-
-                for word in words {
-                    result.push(word.to_string());
-                }
-
-                if self.parse_quit(result.clone()) {
-                    done = true;
-                }
-
-                let choice_selection = self.parse_choice_input(result.clone(), options.clone(), choices.clone());
-
-                if choice_selection.is_some() {
-                    next = choice_selection;
-                    done = true;
-                }
-            }
-        }
-
-        if (next.is_some()) {
+        // The user might have exited from a sub menu,
+        // such as a choice. This would cancel the whole: talk
+        // command making next now be None and causing a panic.
+        if next.is_some() {
             println!("{}", next.clone().unwrap().line);
             next.clone().unwrap().process_conversation();
-        }
-    }
-
-    fn parse_choice_input(&mut self, words: Vec<String>, options: HashMap<i32, String>, choices: Vec<Choices>) -> Option<Converse> {
-        let mut words = words.iter();
-
-        let input = unwrap_str(words.next());
-
-        match input.parse::<i32>() {
-            Ok(n) => {
-                if options.contains_key(&n) {
-                    // You can't have a choice that leads to no convo. So if this then
-                    // explodses thats on you for not supplying a a conversdation to a choice option
-                    return Some(choices[n as usize - 1].next.clone().unwrap());
-                } else {
-                    println!("Not a valid choice.");
-
-                    return None;
-                }
-            },
-            Err(_e) => {
-                match input {
-                    "quit" | "q" | "exit" => {
-                        println!("Conversation over.");
-                        return None;
-                    },
-                    _ => {
-                        println!("invalid input");
-                        return None;
-                    }
-                }
-            }
-        }
-    }
-
-    fn parse_quit(&mut self, words: Vec<String>) -> bool {
-        let mut words = words.iter();
-
-        let command = unwrap_str(words.next());
-
-        match command {
-            "quit" | "q" | "exit" => {
-                println!("You abruptly left the conversation.");
-                return true;
-            },
-            _ => {
-                return false;
-            }
         }
     }
 }
@@ -165,20 +80,112 @@ impl Converse {
 /// Conversations can usually have choices which are stored in a vector.
 /// each choice has a string which is what the player sees in a list of choices.
 ///
-/// The next aspect of the struct contiues the conversation.
+/// The next aspect of the struct contiues the conversation and should be a response to
+/// the selected choice.
 #[derive(Clone, Debug)]
 pub struct Choices {
     pub choice: String,
-    pub next: Option<Converse>,
+    pub next: Converse,
 }
 
 impl Choices {
 
     /// Create a new choice
-    pub fn new(choice: String, next: Option<Converse>) -> Self {
+    pub fn new(choice: String, next: Converse) -> Self {
         Choices {
             choice: choice,
             next: next,
         }
     }
+}
+
+fn proccess(options: HashMap<i32, String>, choices: Vec<Choices>) -> Option<Converse> {
+    let mut done: bool = false;
+
+    let mut next: Option<Converse> = None;
+
+    while !done {
+        print!("> ");
+
+        io::stdout().flush().expect("Error flushing stdout!");
+
+        let mut input = String::new();
+
+        io::stdin().read_line(&mut input)
+                   .expect("Error reading stdin!");
+
+        if input.ends_with('\n') {
+           input.pop();
+        }
+
+        let words: Vec<&str> = input.split_whitespace().collect();
+
+        if words.is_empty() {
+            println!("Invalid input.");
+        } else {
+            let mut result: Vec<String> = Vec::new();
+
+            for word in words {
+                result.push(word.to_string());
+            }
+
+            if parse_quit(result.clone()) {
+                done = true;
+            }
+
+            let choice_selection = parse_choice_input(result.clone(), options.clone(), choices.clone());
+
+            if choice_selection.is_some() {
+                next = choice_selection;
+                done = true;
+            }
+        }
+    }
+
+    return next;
+}
+
+fn parse_choice_input(words: Vec<String>, options: HashMap<i32, String>, choices: Vec<Choices>) -> Option<Converse> {
+    let mut words = words.iter();
+
+    let input = unwrap_str(words.next());
+
+    match input.parse::<i32>() {
+        Ok(n) => {
+            if options.contains_key(&n) {
+                // You can't have a choice that leads to no convo. So if this then
+                // explodses thats on you for not supplying a a conversdation to a choice option
+                return Some(choices[n as usize - 1].next.clone());
+            } else {
+                println!("Not a valid choice.");
+
+                return None;
+            }
+        },
+        Err(_e) => {
+            match input {
+                "quit" | "q" | "exit" => {
+                    println!("Conversation over. You can talk again or do other actions in the room. Type help for more information.");
+                    return None;
+                },
+                _ => {
+                    println!("invalid input");
+                    return None;
+                }
+            }
+        }
+    }
+}
+
+fn conversation_menu(choices: Vec<Choices>) -> HashMap<i32, String> {
+    let mut options = HashMap::new();
+
+    let mut count: i32 = 1;
+
+    for choice in &choices {
+        options.insert(count, choice.clone().choice);
+        count = count + 1;
+    }
+
+    return options;
 }
