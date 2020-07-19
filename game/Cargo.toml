@@ -10,3 +10,4 @@ edition = "2018"
 character = {path = "../character"}
 core      = {path = "../core"}
 world     = {path = "../world"}
+menu      = {path = "../menu"}

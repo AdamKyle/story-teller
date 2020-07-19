@@ -1,10 +1,5 @@
 use std::collections::HashMap;
-use crate::core::process_call_backs::SimpleCallback;
-use crate::text_handeling::unwrap_str;
-
-pub fn menu(base: SimpleCallback) {
-    base.process();
-}
+use core::text_handeling::unwrap_str;
 
 pub fn display_menu(choices: &mut HashMap<i32, String>) {
 
@@ -26,7 +21,7 @@ pub fn parse_quit(words: Vec<String>) -> bool {
 
     match command {
         "quit" | "q" | "exit" => {
-            println!("You abruptly left the conversation. You can talk again or do other actions in the room. Type help for more information.");
+            println!("You abruptly left the conversation.");
             return true;
         },
         _ => {

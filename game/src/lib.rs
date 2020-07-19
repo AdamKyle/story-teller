@@ -1,3 +1,5 @@
+mod menu_system;
+
 use std::io;
 use std::io::Write;
 use std::process;
@@ -9,6 +11,8 @@ use world::room::{Room, Direction};
 use world::actions::Action;
 use world::conversation::Converse;
 use world::person::Person;
+use menu::menu_system::{display_menu};
+use crate::menu_system::talk_menu::{menu_choices, process};
 
 /// Core Game Struct
 ///
@@ -179,118 +183,22 @@ impl Game {
 
         let people = people.clone().unwrap();
 
-        let mut options = HashMap::new();
+        let mut options = menu_choices(people.clone());
 
-        println!("\n");
-        println!("Who are you looking to speak too?");
-        println!("==================================");
+        display_menu(&mut options);
 
-        let mut count: i32 = 1;
+        let mut people_choices = HashMap::new();
+        let mut count = 1;
 
-        for person in people {
-
-            println!("{}) {}", count, person.name);
-
-            options.insert(count, person);
-
+        for person in people.clone() {
+            people_choices.insert(count, person);
             count = count + 1;
         }
 
-        println!("==================================");
-        println!("Choose one by typing the number or q, quit or exit to leave the conversation.");
-        println!("\n");
-
-        let mut done = false;
-
-        let mut found_person: Option<Person> = None;
-
-        while !done {
-            print!("> ");
-
-            io::stdout().flush().expect("Error flushing stdout!");
-
-            let mut input = String::new();
-
-            io::stdin().read_line(&mut input)
-                       .expect("Error reading stdin!");
-
-            if input.ends_with('\n') {
-               input.pop();
-            }
-
-            let words: Vec<&str> = input.split_whitespace().collect();
-
-            if words.is_empty() {
-                println!("Invalid input.");
-            } else {
-                let mut result: Vec<String> = Vec::new();
-
-                for word in words {
-                    result.push(word.to_string());
-                }
-
-                if self.parse_quit(result.clone()) {
-                    done = true;
-                }
-
-                let person = self.parse_choice_input(result.clone(), options.clone());
-
-                if person.is_some() {
-                    found_person = person;
-                    done = true;
-                }
-            }
-        }
+        let found_person: Option<Person> = process(people_choices);
 
         if (found_person.is_some()) {
             found_person.unwrap().conversation.process_conversation();
-        }
-    }
-
-    fn parse_choice_input(&mut self, words: Vec<String>, options: HashMap<i32, Person>) -> Option<Person> {
-        let mut words = words.iter();
-
-        let input = unwrap_str(words.next());
-
-        match input.parse::<i32>() {
-            Ok(n) => {
-                if options.contains_key(&n) {
-                    return Some(options[&n].clone());
-                } else {
-                    println!("Not a valid choice.");
-
-                    return None;
-                }
-
-            },
-            Err(_e) => {
-                match input {
-                    "quit" | "q" | "exit" => {
-                        println!("Conversation over.");
-                        return None;
-                    },
-                    _ => {
-                        println!("invalid input");
-                        return None;
-                    }
-                }
-            }
-        }
-    }
-
-    fn parse_quit(&mut self, words: Vec<String>) -> bool {
-        let mut words = words.iter();
-
-        let command = unwrap_str(words.next());
-
-        match command {
-            "quit" | "q" | "exit" => {
-                println!("You turn away from the people.");
-                return true;
-            },
-            _ => {
-                return false;
-            }
         }
     }
 
