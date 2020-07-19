@@ -47,14 +47,12 @@ impl Converse {
 
         let mut options = HashMap::new();
 
-        options.insert(0, None);
-
         let mut count: i32 = 1;
 
         println!("\n===== [Choices] =====");
 
         for choice in &choices {
-            options.insert(count, Some(choice.clone().choice));
+            options.insert(count, choice.clone().choice);
 
             print!("{}) {}", count, choice.clone().choice);
 
@@ -107,11 +105,13 @@ impl Converse {
             }
         }
 
-        println!("{}", next.clone().unwrap().line);
-        next.clone().unwrap().process_conversation();
+        if (next.is_some()) {
+            println!("{}", next.clone().unwrap().line);
+            next.clone().unwrap().process_conversation();
+        }
     }
 
-    fn parse_choice_input(&mut self, words: Vec<String>, options: HashMap<i32, Option<String>>, choices: Vec<Choices>) -> Option<Converse> {
+    fn parse_choice_input(&mut self, words: Vec<String>, options: HashMap<i32, String>, choices: Vec<Choices>) -> Option<Converse> {
         let mut words = words.iter();
 
         let input = unwrap_str(words.next());
@@ -129,9 +129,16 @@ impl Converse {
                 }
             },
             Err(_e) => {
-                println!("Not a valid choice.");
-
-                return None;
+                match input {
+                    "quit" | "q" | "exit" => {
+                        println!("Conversation over.");
+                        return None;
+                    },
+                    _ => {
+                        println!("invalid input");
+                        return None;
+                    }
+                }
             }
         }
     }

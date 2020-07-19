@@ -74,7 +74,6 @@ fn make_starting_room() -> Room {
         actions,
         exits,
         GoBack::new(true, None),
-        None,
         None
     );
 }
@@ -94,7 +93,6 @@ fn make_path_way() -> Room {
         actions,
         exits,
         GoBack::new(true, None),
-        None,
         None
     );
 }
@@ -120,7 +118,6 @@ fn make_creek() -> Room {
         actions,
         exits,
         GoBack::new(false, Some("There is something preventing you from going back. Is there something to do here?".to_string())),
-        Some(Converse::new(r#"The old man looks at you and asks: "Are you ok? Are you lost?""#.to_string(), Some(make_answer(make_nested_answer())))),
         Some(people)
     );
 }
