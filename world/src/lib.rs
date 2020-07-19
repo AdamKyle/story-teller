@@ -3,6 +3,7 @@ mod world;
 pub use crate::world::actions;
 pub use crate::world::conversation;
 pub use crate::world::room;
+pub use crate::world::person;
 
 use crate::world::room::Room;
 

@@ -3,6 +3,7 @@ use std::vec::Vec;
 use std::collections::HashMap;
 use crate::actions::{Action, OnAction};
 use crate::conversation::Converse;
+use crate::person::Person;
 
 /// Directions the player can move in.
 #[derive(Clone, PartialEq, Debug)]
@@ -56,7 +57,7 @@ pub struct Room {
     pub actions: HashMap<Action, Option<OnAction>>,
     pub exits: Vec<Exit>,
     pub go_back: GoBack,
-    pub conversation: Option<Converse>,
+    pub npcs: Option<Vec<Person>>,
 }
 
 #[derive(Clone, Debug)]
@@ -77,14 +78,21 @@ impl GoBack {
 
 
 impl Room {
-    pub fn new(name: String, description: String, actions: HashMap<Action, Option<OnAction>>, exits: Vec<Exit>, go_back: GoBack, conversation: Option<Converse>) -> Self {
+    pub fn new(
+        name: String,
+        description: String,
+        actions: HashMap<Action, Option<OnAction>>,
+        exits: Vec<Exit>,
+        go_back: GoBack,
+        npcs: Option<Vec<Person>>) -> Self {
+
         Room {
             name: name,
             description: description,
             actions: actions,
             exits: exits,
             go_back: go_back,
-            conversation: conversation,
+            npcs: npcs,
         }
     }
 

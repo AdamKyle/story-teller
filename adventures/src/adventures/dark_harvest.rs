@@ -3,6 +3,7 @@ use world::World;
 use world::room::{Direction, Exit, Room, GoBack, make_exit};
 use world::actions::{Action, OnAction};
 use world::conversation::{Converse, Choices};
+use world::person::Person;
 use character::charactersheet::{Character, create_stats};
 use game::Game;
 use core::stat_bonus::create_all_stat_bonuses;
@@ -74,6 +75,7 @@ fn make_starting_room() -> Room {
         exits,
         GoBack::new(true, None),
         None,
+        None
     );
 }
 
@@ -92,6 +94,7 @@ fn make_path_way() -> Room {
         actions,
         exits,
         GoBack::new(true, None),
+        None,
         None
     );
 }
@@ -108,6 +111,8 @@ fn make_creek() -> Room {
         room: None
     });
 
+    let people = vec![make_poet_by_river()];
+
 
     return Room::new(
         "River".to_string(),
@@ -115,7 +120,8 @@ fn make_creek() -> Room {
         actions,
         exits,
         GoBack::new(false, Some("There is something preventing you from going back. Is there something to do here?".to_string())),
-        Some(Converse::new(r#"The old man looks at you and asks: "Are you ok? Are you lost?""#.to_string(), Some(make_answer(make_nested_answer()))))
+        Some(Converse::new(r#"The old man looks at you and asks: "Are you ok? Are you lost?""#.to_string(), Some(make_answer(make_nested_answer())))),
+        Some(people)
     );
 }
 
@@ -153,4 +159,12 @@ fn make_nested_answer() -> Vec<Choices> {
     );
 
     return second_answer;
+}
+
+fn make_poet_by_river() -> Person {
+    return Person::new(
+        "Mysterious Old Man".to_string(),
+        None,
+        Converse::new(r#"The old man looks at you and asks: "Are you ok? Are you lost?""#.to_string(), Some(make_answer(make_nested_answer()))),
+    );
 }
