@@ -4,7 +4,7 @@ use world::room::{Direction, Exit, Room, GoBack, make_exit};
 use world::actions::{Action, OnAction};
 use world::conversation::{Converse, Choices};
 use world::person::Person;
-use character::charactersheet::{Character, create_stats};
+use character::charactersheet::{Character, create_stats, select_class};
 use game::Game;
 use core::stat_bonus::create_all_stat_bonuses;
 
@@ -17,6 +17,8 @@ pub fn run_dark_harvest(mut character: Character) {
     println!("\nCharacter Creation: Help us create your character sheet.");
 
     character = create_stats(character);
+
+    select_class(character.clone());
 
     let world = dark_harvest_intro();
 

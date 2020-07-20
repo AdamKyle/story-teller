@@ -8,3 +8,6 @@ edition = "2018"
 
 [dependencies]
 rand = "0.7.3"
+prettytable-rs = "^0.8"
+menu = {path = "../menu"}
+core = {path = "../core"}

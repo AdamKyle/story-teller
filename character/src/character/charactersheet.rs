@@ -3,8 +3,9 @@ use std::io;
 use std::io::Write;
 use std::process;
 use rand::Rng;
+use core::text_handeling::unwrap_str;
 
-
+use prettytable::{Table};
 
 /// Defeinition of a character in the game.
 ///
@@ -60,13 +61,19 @@ impl Race {
 #[derive(Clone, Debug)]
 pub struct Class {
     pub name: String,
+    pub can_cast: bool,
+    pub can_steal: bool,
+    pub max_hp: i32,
 }
 
 /// Implementation of class.
 impl Class {
-    pub fn new(name: String) -> Self {
+    pub fn new(name: String, can_cast: bool, can_steal: bool, max_hp: i32) -> Self {
         Class {
-            name: name
+            name: name,
+            can_cast: can_cast,
+            can_steal: can_steal,
+            max_hp: max_hp,
         }
     }
 }
@@ -83,6 +90,143 @@ pub fn build_character(name: String) -> Character {
         stats: None
     }
 }
+
+pub fn select_class(mut character: Character) -> Character {
+    let classes: Vec<Class> = vec![
+        Class::new(
+            "Wizard".to_string(),
+            true,
+            false,
+            4
+        ),
+        Class::new(
+            "Theif".to_string(),
+            false,
+            true,
+            6
+        ),
+        Class::new(
+            "Fighter".to_string(),
+            false,
+            false,
+            8
+        )
+    ];
+
+    println!("\nHelp us determine your class.");
+
+    let mut table = Table::new();
+
+    table.add_row(row!["Class Name", "Can Cast", "Can Steal", "Max HP"]);
+
+    for class in &classes {
+        table.add_row(row![class.name, class.can_cast, class.can_steal, class.max_hp]);
+    }
+
+    table.printstd();
+
+    println!("Type the Choice Number or quit to exit.");
+    println!("\n");
+
+    let mut done: bool = false;
+
+    while !done {
+        print!("> ");
+
+        io::stdout().flush().expect("Error flushing stdout!");
+
+        let mut input = String::new();
+
+        io::stdin().read_line(&mut input)
+                   .expect("Error reading stdin!");
+
+        if input.ends_with('\n') {
+           input.pop();
+        }
+
+        let words: Vec<&str> = input.split_whitespace().collect();
+
+        if words.is_empty() {
+            println!("Invalid input. Try again.");
+
+        } else if input.to_string() == "quit".to_string() {
+            println!("Bye now!");
+            process::exit(1);
+        } else {
+             let updated_character = parse_input(input, character.clone(), &classes);
+
+             if updated_character.is_some() {
+                character = updated_character.unwrap();
+                done = true;
+             }
+        }
+    }
+
+    return character;
+
+}
+
+fn parse_input(input: String, character: Character, classes: &Vec<Class>) -> Option<Character> {
+    let words: Vec<&str> = input.split_whitespace().collect();
+
+    if words.is_empty() {
+        println!("Invalid input.");
+    }
+
+    let mut result: Vec<String> = Vec::new();
+
+    for word in words {
+        let single_word = clean_words(word.to_string());
+
+        result.push(single_word);
+    }
+
+    return parse_commands(result, character, classes);
+}
+
+fn clean_words(word: String) -> String {
+    let mut s = String::new();
+
+    for character in word.chars() {
+        for d in character.to_lowercase() {
+            s.push(d);
+        }
+    }
+
+    return s;
+}
+
+fn parse_commands(words: Vec<String>, mut character: Character, classes: &Vec<Class>) -> Option<Character> {
+    let mut words = words.iter();
+
+    let command = unwrap_str(words.next());
+
+    if command == "" {
+        println!("Invalid input.");
+
+        return None;
+    }
+
+    match command {
+        "wizard" => {
+            character.class = Some(classes[0].clone());
+            return Some(character);
+        },
+        "fighter" => {
+            character.class = Some(classes[2].clone());
+            return Some(character);
+        },
+        "theif" => {
+            character.class = Some(classes[1].clone());
+            return Some(character);
+        },
+        _ => {
+            println!("class not found");
+            return None;
+        },
+    }
+}
+
 
 /// Create the stats for the character and return that character.
 ///
