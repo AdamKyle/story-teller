@@ -9,7 +9,6 @@ use core::text_handeling::unwrap_str;
 use world::World;
 use world::room::{Room, Direction};
 use world::actions::Action;
-use world::conversation::Converse;
 use world::person::Person;
 use menu::menu_system::{display_menu};
 use crate::menu_system::talk_menu::{menu_choices, process};
@@ -181,24 +180,35 @@ impl Game {
             return;
         }
 
-        let people = people.clone().unwrap();
+        let people_count = people.clone().unwrap().len();
 
-        let mut options = menu_choices(people.clone());
+        // If there is one person in the room then we just have to process that
+        // conversation.
+        //
+        // Else lets create the choice of people to speak to and then process that persons
+        // conversation based on choice.
+        if people_count == 1 {
+            people.clone().unwrap()[0].conversation.process_conversation();
+        } else {
+            let people = people.clone().unwrap();
 
-        display_menu(&mut options);
+            let mut options = menu_choices(people.clone());
 
-        let mut people_choices = HashMap::new();
-        let mut count = 1;
+            display_menu(&mut options);
 
-        for person in people.clone() {
-            people_choices.insert(count, person);
-            count = count + 1;
-        }
+            let mut people_choices = HashMap::new();
+            let mut count = 1;
 
-        let found_person: Option<Person> = process(people_choices);
+            for person in people.clone() {
+                people_choices.insert(count, person);
+                count = count + 1;
+            }
 
-        if (found_person.is_some()) {
-            found_person.unwrap().conversation.process_conversation();
+            let found_person: Option<Person> = process(people_choices);
+
+            if found_person.is_some() {
+                found_person.unwrap().conversation.process_conversation();
+            }
         }
     }
 

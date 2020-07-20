@@ -2,7 +2,6 @@ use rand::Rng;
 use std::vec::Vec;
 use std::collections::HashMap;
 use crate::actions::{Action, OnAction};
-use crate::conversation::Converse;
 use crate::person::Person;
 
 /// Directions the player can move in.

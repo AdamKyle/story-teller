@@ -1,11 +1,5 @@
-use std::io;
-use std::io::Write;
 use std::vec::Vec;
-use std::boxed::Box;
-use std::collections::HashMap;
-use core::text_handeling::unwrap_str;
-use core::process_call_backs::SimpleCallback;
-use menu::menu_system::{display_menu, parse_quit};
+use menu::menu_system::display_menu;
 use crate::menu_system::conversation_menu::{conversation_menu, process};
 
 /// Converseations consisting of a line and possible choices.
@@ -55,6 +49,7 @@ impl Converse {
     pub fn process_conversation(&mut self) {
 
         if !self.choices.clone().is_some() {
+            println!("\nWhat do you do? (type help for commands)");
             return;
         }
 
@@ -65,12 +60,12 @@ impl Converse {
         display_menu(&mut options);
 
         let next = process(options, choices.clone());
-        
+
         // The user might have exited from a sub menu,
         // such as a choice. This would cancel the whole: talk
         // command making next now be None and causing a panic.
         if next.is_some() {
-            println!("{}", next.clone().unwrap().line);
+            println!("\n{}", next.clone().unwrap().line);
             next.clone().unwrap().process_conversation();
         }
     }
