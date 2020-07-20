@@ -16,9 +16,7 @@ pub fn run_dark_harvest(mut character: Character) {
 
     println!("\nCharacter Creation: Help us create your character sheet.");
 
-    character = create_stats(character);
-
-    select_class(character.clone());
+    character = create_stats(select_class(character));
 
     let world = dark_harvest_intro();
 

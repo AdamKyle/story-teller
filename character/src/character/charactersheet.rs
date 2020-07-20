@@ -91,6 +91,9 @@ pub fn build_character(name: String) -> Character {
     }
 }
 
+/// Allows the player to select a class.
+///
+/// Classes are pre-defined: Wizard, Thief and Fighter.
 pub fn select_class(mut character: Character) -> Character {
     let classes: Vec<Class> = vec![
         Class::new(
